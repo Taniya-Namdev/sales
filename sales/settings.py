@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'upload_csv_file',
     'oauth2_provider',
     'rest_framework.authtoken',
-    'accounts',
+    # 'accounts',
 ]
 
 MIDDLEWARE = [
