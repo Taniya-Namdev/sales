@@ -12,9 +12,16 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import environ
+
+# Initialize environment variables
+env = environ.Env()
+# Read the .env file (if present)
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
- 
+environ.Env.read_env(os.path.join(BASE_DIR,".env"))
+
 MEDIA_ROOT = os.path.join(BASE_DIR,'files')
 MEDIA_URL = '/files/'
 
@@ -25,12 +32,12 @@ MEDIA_URL = '/files/'
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-c58%&s7e!5o!3hi+mj1f3z&!n7v6!876@_gb9h*7s=ijexp2*k'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG',default=False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env('ALLOWED_HOSTS').split(',')
 
 
 # Application definition
@@ -86,11 +93,11 @@ WSGI_APPLICATION = 'sales.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "sales",
-        "USER": "postgres",
-        "PASSWORD":"postgres",
-        "HOST": "localhost",
-        "PORT":5432,
+        "NAME": env('DB_NAME'),
+        "USER": env('DB_USER'),
+        "PASSWORD":env('DB_PASSWORD'),
+        "HOST": env('DB_HOST'),
+        "PORT":env('DB_PORT',default=5432),
         
     }
 }
@@ -171,7 +178,7 @@ LOGGING = {
     },
 }
 # Custom User config
-AUTH_USER_MODEL = "accounts.CustomUser"
+# AUTH_USER_MODEL = "accounts.CustomUser"
 
 # Authentication classes
 REST_FRAMEWORK = {
