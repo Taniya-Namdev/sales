@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'upload_csv_file',
     'oauth2_provider',
     'rest_framework.authtoken',
-    # 'accounts',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -180,9 +180,15 @@ LOGGING = {
 # Custom User config
 # AUTH_USER_MODEL = "accounts.CustomUser"
 
-# Authentication classes
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-    ),
-}
+# # Authentication classes
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+#     ),
+# }
+
+
+
+
+
+
