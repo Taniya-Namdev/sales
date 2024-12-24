@@ -11,7 +11,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ('id', 'email', 'password', 'first_name', 'last_name')  # Include other fields as needed
         extra_kwargs = {
-            'password': {'write_only': True, 'required': False}
+            'password': {'write_only': True, 'required': True}
         }
 
     def validate_password(self, value):
@@ -21,6 +21,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         except DjangoValidationError as e:
             raise serializers.ValidationError(e.messages)
         return value
+    
 
     def create(self, validated_data):
         user = CustomUser.objects.create_user(

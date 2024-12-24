@@ -591,8 +591,7 @@ def preload_data(df):
 
         product_tuple = (row['Item Type'], row['Unit Price'], row['Unit Cost'])
         if product_tuple not in product_set:
-            if not Product.objects.filter(item_type=row['Item Type'], unit_price=row['Unit Price'], unit_cost=row['Unit Cost']).exists():
-                Product.objects.create(item_type=row['Item Type'], unit_price=row['Unit Price'], unit_cost=row['Unit Cost'])
+            Product.objects.create(item_type=row['Item Type'], unit_price=row['Unit Price'], unit_cost=row['Unit Cost'])
             product_set.add(product_tuple)
             logger.info(f"Product created or already exists: {row['Item Type']}")
 
@@ -605,8 +604,8 @@ def process_chunk(df_chunk):
             if order_id not in order_list:
                 order_date = pd.to_datetime(row['Order Date']).strftime('%Y-%m-%d')
                 ship_date = pd.to_datetime(row['Ship Date']).strftime('%Y-%m-%d')
-                if not Order.objects.filter(order_id=order_id).exists():
-                    Order.objects.create(order_id=order_id, order_date=order_date, ship_date=ship_date, order_priority=row['Order Priority'], sales_channel=row['Sales Channel'])
+                Order.objects.create(order_id=order_id, order_date=order_date, ship_date=ship_date, order_priority=row['Order Priority'], 
+                sales_channel=row['Sales Channel'])
                 order_list.append(order_id)
                 logger.info(f"Order created or already exists: {order_id}")
 
