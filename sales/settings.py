@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'upload_csv_file',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'accounts',
 ]
 
@@ -190,7 +191,11 @@ REST_FRAMEWORK = {
 AUTHENTICATION_BACKENDS = [ 'django.contrib.auth.backends.ModelBackend', 
 ]
 
-
+# enabling blacklisting of token
+SIMPLE_JWT = {
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'BLACKLIST_AFTER_ROTATION': True,
+}
 
 
 
