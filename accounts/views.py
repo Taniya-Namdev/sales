@@ -30,18 +30,25 @@ class SignupView(APIView):
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
+
     def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
         user = authenticate(request, email=email, password=password)
+        
         if user is not None:
             login(request, user)
+            serializer = CustomUserSerializer(user)
             refresh = RefreshToken.for_user(user)
-            return Response({'message':'Successfully logged in',
+            return Response({
+                'message': 'Successfully logged in',
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
+                'user': serializer.data  # Return serialized user data
             }, status=status.HTTP_200_OK)
+        
         return Response({'error': 'Invalid email or password'}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
