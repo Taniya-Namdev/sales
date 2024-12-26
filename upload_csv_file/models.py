@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-
+from django.conf import settings
 
 # File model (Indexing 'uploaded_at' field)
 class File(models.Model):
@@ -106,6 +106,7 @@ class Sales(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     units_sold = models.IntegerField()
     total_revenue = models.DecimalField(max_digits=15, decimal_places=2)
     total_cost = models.DecimalField(max_digits=15, decimal_places=2)
