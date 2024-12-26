@@ -55,17 +55,20 @@ class LoginSerializer(serializers.Serializer):
         password = data.get('password')
         user = authenticate(email=email, password=password)
 
-        if user and user.is_active:
-            refresh = RefreshToken.for_user(user)
-            return {
-                'email': user.email,
-                'access': str(refresh.access_token),
-                'refresh': str(refresh),
-                'user': CustomUserSerializer(user).data
-            }
-        else:
+        if not(user and user.is_active):
             raise serializers.ValidationError("Invalid email or password")
+        data['user'] = user
+        return data
+        
 
     def create(self, validated_data):
+        user = validated_data['user']
         # Optionally, we could create any additional login-related objects here.
-        pass
+        refresh = RefreshToken.for_user(user)
+        return {
+            'email': user.email,
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': CustomUserSerializer(user).data
+        }
+        return user

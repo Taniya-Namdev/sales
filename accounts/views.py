@@ -37,7 +37,7 @@ class LoginView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
-            data = serializer.validated_data
+            data = serializer.save()
             user = CustomUser.objects.get(email=data['email'])
             login(request, user)
             return Response({
