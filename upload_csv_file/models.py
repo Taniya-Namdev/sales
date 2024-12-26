@@ -86,7 +86,8 @@ class Order(models.Model):
     ship_date = models.DateField(default=timezone.now)
     order_priority = models.CharField(max_length=5, choices=ORDER_PRIORITY_CHOICE, default=LOW)
     sales_channel = models.CharField(max_length=10, choices=SALES_CHANNEL_CHOICE, default=ONLINE)
-
+    # for soft delete 
+    
     class Meta:
         indexes = [
             models.Index(fields=['order_id']),  # Index on 'order_id' for faster lookups
@@ -98,6 +99,8 @@ class Order(models.Model):
 
     def __str__(self):
         return str(self.order_id)
+    
+    
 
 
 # Sales Info

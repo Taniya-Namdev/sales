@@ -11,7 +11,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ('id', 'email', 'password', 'first_name', 'last_name')  # Include other fields as needed
         extra_kwargs = {
-            'password': {'write_only': True, 'required': True}
+            'password': {'write_only': True}
         }
 
     def validate_password(self, value):
@@ -71,4 +71,4 @@ class LoginSerializer(serializers.Serializer):
             'refresh': str(refresh),
             'user': CustomUserSerializer(user).data
         }
-        return user
+       

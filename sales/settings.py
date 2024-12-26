@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'accounts',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -187,6 +188,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+   
 }
 AUTHENTICATION_BACKENDS = [ 'django.contrib.auth.backends.ModelBackend', 
 ]
