@@ -88,7 +88,7 @@ class Order(SoftDeleteObject, models.Model):
     order_priority = models.CharField(max_length=5, choices=ORDER_PRIORITY_CHOICE, default=LOW)
     sales_channel = models.CharField(max_length=10, choices=SALES_CHANNEL_CHOICE, default=ONLINE)
     # for soft delete 
-    is_delete = models.BooleanField(default=False)
+    
     class Meta:
         indexes = [
             models.Index(fields=['order_id']),  # Index on 'order_id' for faster lookups

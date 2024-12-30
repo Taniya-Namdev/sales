@@ -48,7 +48,7 @@ class OrderPagination(PageNumberPagination):
     max_page_size = 100
 
 class OrderListView(generics.ListAPIView):
-    queryset = Order.objects.filter(is_delete=False)
+    queryset = Order.objects.filter(deleted_at=None)
     serializer_class = OrderSerializer
     filterset_class = OrderFilter
     ordering_fields = ['order_date', 'ship_date', 'order_priority', 'sales_channel']
