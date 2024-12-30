@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
@@ -6,9 +5,6 @@ from rest_framework import status, generics
 
 from .models import Order
 from accounts.models import CustomUser
-from .serializers import OrderSerializer
-from rest_framework import generics
-from .models import Order
 from .serializers import OrderSerializer, UserActivationSerializer
 from accounts.serializers import CustomUserSerializer
 from .filters import OrderFilter
