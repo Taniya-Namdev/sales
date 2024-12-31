@@ -15,7 +15,7 @@ import os
 import environ
 
 # Initialize environment variables
-env = environ.Env()
+env = environ.Env(DEBUG=(bool,False))
 # Read the .env file (if present)
 
 
@@ -67,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'accounts.middleware.StatusCodeLoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'sales.urls'
@@ -155,7 +156,11 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '{asctime} - {levelname} - {message}',
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
             'style': '{',
         },
     },
@@ -163,7 +168,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'import_log.log'),
+            'filename': 'app.log',
             'formatter': 'verbose',
         },
     },
@@ -173,13 +178,14 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
-        'import_csv': {
+        'django.request': {
             'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
+            'level': 'ERROR',
+            'propagate': False,
         },
     },
 }
+
 # Custom User config
 AUTH_USER_MODEL = "accounts.CustomUser"
 
@@ -211,5 +217,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'taniya.namdev@dianapps.com'
-EMAIL_HOST_PASSWORD = 'sjymokzsfcnjxuqk'
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
