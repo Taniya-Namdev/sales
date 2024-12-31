@@ -1,5 +1,6 @@
 from .models import Order
 from django_filters import rest_framework as filters
+
 class OrderFilter(filters.FilterSet):
     order_date = filters.DateFilter(field_name="order_date")
     ship_date = filters.DateFilter(field_name="ship_date")
