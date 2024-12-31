@@ -12,7 +12,6 @@ from .tokens import account_activation_token
 from .models import CustomUser as User
 from .serializers import CustomUserSerializer, LoginSerializer
 from .tasks import send_verification_email
-import logging
 class SignupView(APIView):
      
     permission_classes = [AllowAny]
@@ -25,7 +24,6 @@ class SignupView(APIView):
         last_name = request.data.get('last_name')
 
         if password != confirm_password:
-            logging.warning('Password do not match')
             return Response({'error': 'Passwords do not match'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = CustomUserSerializer(data=request.data)
