@@ -19,11 +19,13 @@ class SignupView(APIView):
         email = request.data.get('email')
         password = request.data.get('password')
         confirm_password = request.data.get('confirm_password')
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
 
         if password != confirm_password:
             return Response({'error': 'Passwords do not match'}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = CustomUserSerializer(data={'email': email, 'password': password})
+        serializer = CustomUserSerializer(data={'email': email, 'password': password,'first_name':first_name,'last_name':last_name})
         if serializer.is_valid():
             user = serializer.save()
             return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)

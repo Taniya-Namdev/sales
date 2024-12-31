@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
+from softdelete.models import SoftDeleteObject
 
 # File model (Indexing 'uploaded_at' field)
 class File(models.Model):
@@ -62,7 +63,7 @@ class Product(models.Model):
 
 # Order Info 
 
-class Order(models.Model):
+class Order(SoftDeleteObject, models.Model):
     ONLINE = 'online'
     OFFLINE = 'offline'
     SALES_CHANNEL_CHOICE = [
@@ -99,6 +100,7 @@ class Order(models.Model):
 
     def __str__(self):
         return str(self.order_id)
+    
     
     
 
