@@ -15,11 +15,11 @@ import os
 import environ
 
 # Initialize environment variables
-env = environ.Env()
+env = environ.Env(DEBUG=(bool,False))
 # Read the .env file (if present)
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR =os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 environ.Env.read_env(os.path.join(BASE_DIR,".env"))
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'files')
@@ -55,6 +55,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'accounts',
     'django_filters',
+    'django_celery_results',
+    'softdelete', 
 ]
 
 MIDDLEWARE = [
@@ -65,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'accounts.middleware.StatusCodeLoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'sales.urls'
@@ -72,7 +75,7 @@ ROOT_URLCONF = 'sales.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR,'accounts/', 'templates/','accounts/')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -153,7 +156,11 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '{asctime} - {levelname} - {message}',
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
             'style': '{',
         },
     },
@@ -161,7 +168,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'import_log.log'),
+            'filename': 'app.log',
             'formatter': 'verbose',
         },
     },
@@ -171,13 +178,14 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
-        'import_csv': {
+        'django.request': {
             'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
+            'level': 'ERROR',
+            'propagate': False,
         },
     },
 }
+
 # Custom User config
 AUTH_USER_MODEL = "accounts.CustomUser"
 
@@ -199,6 +207,15 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True 
+CELERY_RESULT_BACKEND = 'django-db'
 
-
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'taniya.namdev@dianapps.com'
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 

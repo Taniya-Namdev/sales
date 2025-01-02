@@ -1,21 +1,21 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
-# Create your views here.
-
+from rest_framework.pagination import PageNumberPagination 
+from rest_framework.permissions import IsAdminUser,IsAuthenticated
 from .models import Order
 from accounts.models import CustomUser
+from .filters import OrderFilter
 from .serializers import OrderSerializer, UserActivationSerializer
 from accounts.serializers import CustomUserSerializer
-from .filters import OrderFilter
-from rest_framework.pagination import PageNumberPagination 
-from rest_framework.permissions import IsAdminUser
+
 
 
 
 class OrderCreateView(generics.CreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    permission_classes=[IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
