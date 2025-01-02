@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, generics
+from rest_framework import status, generics, filters
 from rest_framework.pagination import PageNumberPagination 
 from rest_framework.permissions import IsAdminUser,IsAuthenticated
 from .models import Order
@@ -8,7 +8,7 @@ from accounts.models import CustomUser
 from .filters import OrderFilter
 from .serializers import OrderSerializer, UserActivationSerializer
 from accounts.serializers import CustomUserSerializer
-
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 
@@ -43,12 +43,27 @@ class OrderPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 100
 
-class OrderListView(generics.ListAPIView):
+class OrderListViewV1(generics.ListAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = OrderPagination
+    
+
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        return Response({"message": "Order list retrieved successfully", "data": response.data}, status=response.status_code)
+
+
+class OrderListViewV2(generics.ListAPIView):
     queryset = Order.objects.filter(deleted_at=None)
     serializer_class = OrderSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     filterset_class = OrderFilter
     ordering_fields = ['order_date', 'ship_date', 'order_priority', 'sales_channel']
     pagination_class = OrderPagination
+    permission_classes = [IsAuthenticated]
+
 
     def list(self, request, *args, **kwargs):
         response = super().list(request, *args, **kwargs)
