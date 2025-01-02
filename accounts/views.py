@@ -1,19 +1,20 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import  login, logout
+from django.contrib.auth import login, logout
 from django.contrib.sites.shortcuts import get_current_site
-from django.shortcuts import  redirect
+from django.shortcuts import redirect
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
 from .tokens import account_activation_token
 from .models import CustomUser as User
 from .serializers import CustomUserSerializer, LoginSerializer
 from .tasks import send_verification_email
+import strings
+
 class SignupView(APIView):
-     
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -24,7 +25,7 @@ class SignupView(APIView):
         last_name = request.data.get('last_name')
 
         if password != confirm_password:
-            return Response({'error': 'Passwords do not match'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(strings.PASSWORDS_DO_NOT_MATCH_ERROR, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = CustomUserSerializer(data=request.data)
         if serializer.is_valid():
@@ -35,26 +36,27 @@ class SignupView(APIView):
             # send verification email asynchronously
             current_site = get_current_site(request)
             send_verification_email(user.id, current_site.domain)
-            return Response({'message': 'User registered successfully, check your mailbox for activating your account.'}, status=status.HTTP_201_CREATED)
+            return Response(strings.USER_REGISTERED_MESSAGE, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ActivateView(APIView):
-    permission_classes=[AllowAny]
+    permission_classes = [AllowAny]
+
     def get(self, request, uidb64, token):
+        uid = force_str(urlsafe_base64_decode(uidb64))
         try:
-            uid = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
-        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
 
         if user is not None and account_activation_token.check_token(user, token):
             user.is_active = True
             user.save()
             login(request, user)
-            return Response({'message':'Activated User'},status=status.HTTP_200_OK)
+            return Response(strings.ACTIVATED_USER_MESSAGE, status=status.HTTP_200_OK)
         else:
-            return Response({'error': 'Activation link is invalid!'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(strings.INVALID_ACTIVATION_LINK_ERROR, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginView(APIView):
@@ -66,15 +68,15 @@ class LoginView(APIView):
             data = serializer.save()
             user = User.objects.get(email=data['email'])
             login(request, user)
-            return Response({
-                'message': 'Successfully logged in',
-                'refresh': data['refresh'],
-                'access': data['access'],
-                'user': data['user']
-            }, status=status.HTTP_200_OK)
+            
+            # Update the login success message with dynamic data
+            strings.LOGIN_SUCCESS_MESSAGE['refresh'] = data['refresh']
+            strings.LOGIN_SUCCESS_MESSAGE['access'] = data['access']
+            strings.LOGIN_SUCCESS_MESSAGE['user'] = data['user']
+
+            return Response(strings.LOGIN_SUCCESS_MESSAGE, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
-
 
 
 class LogoutView(APIView):
@@ -88,9 +90,10 @@ class LogoutView(APIView):
                 token.blacklist()
 
             logout(request)
-            return Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)
+            return Response(strings.LOGOUT_SUCCESS_MESSAGE, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ProfileUpdateView(APIView):
     permission_classes = [IsAuthenticated]
@@ -100,6 +103,5 @@ class ProfileUpdateView(APIView):
         serializer = CustomUserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({'message': 'Profile updated successfully'}, status=status.HTTP_200_OK)
+            return Response(strings.PROFILE_UPDATED_MESSAGE, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
