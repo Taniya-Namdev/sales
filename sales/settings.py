@@ -24,7 +24,7 @@ environ.Env.read_env(os.path.join(BASE_DIR,".env"))
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'files')
 MEDIA_URL = '/files/'
-
+GOOGLE_API_CREDENTIALS = os.path.join(BASE_DIR, 'credentials.json')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 
@@ -56,14 +56,15 @@ INSTALLED_APPS = [
     'accounts',
     'django_filters',
     'django_celery_results',
-    'softdelete', 
+    'softdelete',
+    'google_calendar', 
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -75,7 +76,7 @@ ROOT_URLCONF = 'sales.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'accounts/', 'templates/','accounts/')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -219,3 +220,27 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'taniya.namdev@dianapps.com'
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
+# myproject/settings.py
+# OAUTH2_PROVIDER = {
+#     'SCOPES': {'calendar': 'Read/write access to Calendar'},
+#     'CLIENT_ID': "216492862860-g0qvescetsj9gs6mqfhtb559efuhh7sr.apps.googleusercontent.com",
+#     'CLIENT_SECRET': "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",
+#     'REDIRECT_URI':'http://localhost:8000/'
+# }
+
+
+
+# # settings.py
+
+# # Google OAuth 2.0 configuration
+# GOOGLE_CLIENT_ID = '216492862860-g0qvescetsj9gs6mqfhtb559efuhh7sr.apps.googleusercontent.com'
+# GOOGLE_CLIENT_SECRET = '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'
+# GOOGLE_REDIRECT_URI = 'http://localhost:8000/'
+# GOOGLE_AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/auth'
+# GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token'
+# GOOGLE_SCOPE = [
+#     'https://www.googleapis.com/auth/calendar',
+#     'https://www.googleapis.com/auth/userinfo.profile',
+# ]
+
+# Other settings...

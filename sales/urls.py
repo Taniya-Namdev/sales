@@ -26,6 +26,7 @@ urlpatterns = [
     path('api/',include('accounts.urls')),
     path('api/v1/',include(('upload_csv_file.V1_urls','upload_csv_file'),namespace='v1')),
     path('api/v2/',include(('upload_csv_file.V2_urls','upload_csv_file'),namespace='v2')),
+    path('api/',include("google_calendar.urls")),
     
 ]
 

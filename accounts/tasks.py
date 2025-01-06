@@ -14,7 +14,7 @@ def send_verification_email(user_id, domain):
     try:
         user = User.objects.get(pk=user_id)
         mail_subject = 'Activate your account.'
-        message = render_to_string('mail.html', {'user': user,
+        message = render_to_string('accounts/mail.html', {'user': user,
         'domain': domain,
         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
         'token': account_activation_token.make_token(user),
