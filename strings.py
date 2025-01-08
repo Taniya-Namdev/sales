@@ -14,3 +14,5 @@ LOGIN_SUCCESS_MESSAGE = {
 }
 LOGOUT_SUCCESS_MESSAGE = {'message': 'Logged out successfully'}
 PROFILE_UPDATED_MESSAGE = {'message': 'Profile updated successfully'}
+EVENT_CREATED_MESSAGE = 'Event Successfully created.'
+NO_EVENT_MESSAGE = {'message':'No upcomming events are there.'}

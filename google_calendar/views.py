@@ -10,6 +10,7 @@ from django.conf import settings
 import os
 import datetime
 import json
+import strings
 
 SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
@@ -35,7 +36,7 @@ def get_events(request):
         events_result = service.events().list(calendarId="primary", timeMin=now, maxResults=10, singleEvents=True, orderBy="startTime").execute()
         events = events_result.get("items", [])
         if not events:
-            return JsonResponse({"message": "No upcoming events found."})
+            return JsonResponse({strings.NO_EVENT_MESSAGE})
         event_list = []
         for event in events:
             start = event["start"].get("dateTime", event["start"].get("date"))
@@ -62,7 +63,7 @@ def create_event(request):
                 },
             }
             event = service.events().insert(calendarId="primary", body=event).execute()
-            return JsonResponse({"message": "Event created", "event": event})
+            return JsonResponse({ 'message':strings.EVENT_CREATED_MESSAGE,'event': event})
         except HttpError as error:
             return JsonResponse({"error": str(error)})
 

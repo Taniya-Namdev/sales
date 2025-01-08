@@ -220,27 +220,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'taniya.namdev@dianapps.com'
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
-# myproject/settings.py
-# OAUTH2_PROVIDER = {
-#     'SCOPES': {'calendar': 'Read/write access to Calendar'},
-#     'CLIENT_ID': "216492862860-g0qvescetsj9gs6mqfhtb559efuhh7sr.apps.googleusercontent.com",
-#     'CLIENT_SECRET': "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",
-#     'REDIRECT_URI':'http://localhost:8000/'
-# }
 
-
-
-# # settings.py
-
-# # Google OAuth 2.0 configuration
-# GOOGLE_CLIENT_ID = '216492862860-g0qvescetsj9gs6mqfhtb559efuhh7sr.apps.googleusercontent.com'
-# GOOGLE_CLIENT_SECRET = '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'
-# GOOGLE_REDIRECT_URI = 'http://localhost:8000/'
-# GOOGLE_AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/auth'
-# GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token'
-# GOOGLE_SCOPE = [
-#     'https://www.googleapis.com/auth/calendar',
-#     'https://www.googleapis.com/auth/userinfo.profile',
-# ]
-
-# Other settings...
