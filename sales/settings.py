@@ -24,7 +24,7 @@ environ.Env.read_env(os.path.join(BASE_DIR,".env"))
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'files')
 MEDIA_URL = '/files/'
-
+GOOGLE_API_CREDENTIALS = os.path.join(BASE_DIR, 'credentials.json')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 
@@ -56,14 +56,15 @@ INSTALLED_APPS = [
     'accounts',
     'django_filters',
     'django_celery_results',
-    'softdelete', 
+    'softdelete',
+    'google_calendar', 
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -75,7 +76,7 @@ ROOT_URLCONF = 'sales.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'accounts/', 'templates/','accounts/')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -218,4 +219,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'taniya.namdev@dianapps.com'
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+
 

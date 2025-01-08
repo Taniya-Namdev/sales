@@ -175,3 +175,4 @@ cython_debug/
 # files/sales.csv
 # All csv file should ignore 
 *.csv
+*.json
