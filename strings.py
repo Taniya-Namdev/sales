@@ -9,8 +9,8 @@ USER_NOT_FOUND_ERROR = {'error': 'User not found!'}
 LOGIN_SUCCESS_MESSAGE = {
     'message': 'Successfully logged in',
     'refresh': None,  # Placeholder, will be set dynamically in views
-    'access': None,   # Placeholder, will be set dynamically in views
-    'user': None      # Placeholder, will be set dynamically in views
+    'access': None,   
+    'user': None      
 }
 LOGOUT_SUCCESS_MESSAGE = {'message': 'Logged out successfully'}
 PROFILE_UPDATED_MESSAGE = {'message': 'Profile updated successfully'}
