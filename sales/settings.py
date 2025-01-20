@@ -43,6 +43,7 @@ ALLOWED_HOSTS = env('ALLOWED_HOSTS').split(',')
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -58,7 +59,13 @@ INSTALLED_APPS = [
     'django_celery_results',
     'softdelete',
     'google_calendar', 
+    'channels',
+    'chat',
+    
+
 ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -69,6 +76,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'accounts.middleware.StatusCodeLoggingMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'sales.urls'
@@ -90,8 +98,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'sales.wsgi.application'
-
-
+ASGI_APPLICATION = 'sales.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND':'channels_redis.core.RedisChannelLayer',
+        'CONFIG':{
+            'hosts':[('127.0.0.1',6379)]
+        }
+    }
+}
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -142,7 +157,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICSFILES_DIRS = os.path.join(BASE_DIR, "static"),
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -199,7 +216,9 @@ REST_FRAMEWORK = {
     ),
    'DEFAULT_FILTER_BACKENDS': [ 'django_filters.rest_framework.DjangoFilterBackend'],
 }
-AUTHENTICATION_BACKENDS = [ 'django.contrib.auth.backends.ModelBackend', 
+AUTHENTICATION_BACKENDS = [ 
+    'django.contrib.auth.backends.ModelBackend', 
+    
 ]
 
 # enabling blacklisting of token
@@ -221,3 +240,5 @@ EMAIL_HOST_USER = 'taniya.namdev@dianapps.com'
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 
+LOGIN_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = 'index'

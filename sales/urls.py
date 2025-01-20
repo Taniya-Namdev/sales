@@ -27,8 +27,10 @@ urlpatterns = [
     path('api/v1/',include(('upload_csv_file.V1_urls','upload_csv_file'),namespace='v1')),
     path('api/v2/',include(('upload_csv_file.V2_urls','upload_csv_file'),namespace='v2')),
     path('api/',include("google_calendar.urls")),
+    path('chat/',include('chat.urls')),
+   
     
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

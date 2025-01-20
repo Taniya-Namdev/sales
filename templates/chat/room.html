@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Chat Room</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            width: 60%;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-log {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            border-top: 1px solid #ddd;
+        }
+        .chat-message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+        .chat-message.sender {
+            background-color: #DCF8C6;
+            align-self: flex-end;
+            text-align: right;
+        }
+        .chat-message.receiver {
+            background-color: #f1f1f1;
+            align-self: flex-start;
+        }
+        .footer {
+            display: flex;
+            border-top: 1px solid #ddd;
+            padding: 10px;
+        }
+        .textInput {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .sendButton {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .sendButton:hover {
+            background-color: #45a049;
+        }
+        .logout-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .logout-icon {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Chat Room: {{ room_name }}</h2>
+            <button class="logout-button" onclick="window.location.href='{% url 'logout' %}'">
+                <i class="material-icons logout-icon">logout</i>
+            </button>
+        </div>
+        <div class="chat-log" id="chat-log">
+            {% for chat in chats %}
+                <div class="chat-message {% if chat.sender.id == user_id %}sender{% else %}receiver{% endif %}">
+                    <strong>{{ chat.sender.first_name }}:</strong> {{ chat.content }} <em>{{ chat.timestamp }}</em>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="footer">
+            <input class="textInput" id="chat-message-input" type="text" placeholder="Type your message...">
+            <button class="sendButton" id="chat-message-submit">Send</button>
+        </div>
+    </div>
+    {{ room_name|json_script:"room-name" }}
+    {{ user_id|json_script:"user-id" }}
+    <script>
+        const chatLog = document.querySelector('#chat-log');
+        const roomName = JSON.parse(document.getElementById('room-name').textContent);
+        const userId = JSON.parse(document.getElementById('user-id').textContent);
+
+        if (!chatLog.hasChildNodes()) {
+            const emptyText = document.createElement('h3');
+            emptyText.id = 'emptytext';
+            emptyText.innerText = 'No messages';
+            emptyText.className = 'emptyText';
+            chatLog.appendChild(emptyText);
+        }
+
+        const chatSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            if (data.message) {
+                const messageElement = document.createElement('div');
+                messageElement.innerText = `${data.first_name}: ${data.message}                           ${data.timestamp}`;
+                messageElement.className = 'chat-message';
+
+                if (data.user_id == userId) {
+                    messageElement.classList.add('sender');
+                } else {
+                    messageElement.classList.add('receiver');
+                }
+
+                chatLog.appendChild(messageElement);
+
+                if (document.querySelector('#emptytext')) {
+                    document.querySelector('#emptytext').remove();
+                }
+
+                chatLog.scrollTop = chatLog.scrollHeight;
+            } else if (data.error) {
+                const errorElement = document.createElement('div');
+                errorElement.innerText = `Error: ${data.error}`;
+                errorElement.className = 'chat-message error';
+                chatLog.appendChild(errorElement);
+            }
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+            if (e.key === 'Enter') {
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+
+            if (message.trim() !== '') {
+                chatSocket.send(JSON.stringify({
+                    'type': 'message',
+                    'message': message,
+                    'timestamp': new Date().toLocaleTimeString()  // Add timestamp
+                }));
+                messageInputDom.value = '';
+            }
+        };
+    </script>
+</body>
+</html>
+{% comment %} you have my consumers.py my views.py and also room.html according to all of this , i want to create an chat application for my project in which firstly user go on chat url if he is signed in then he has option for enter in chat room if not then a sign in form will render to user if he is authenticated then render to chat room. The chat room process is like user have option to create a new chat room or select existing one . The creator of any new room have to create unique name of chat room and also decide other user of plat form to enter in his room . if user selcect the second option to choose existing room then he can only enter in that room where he has permission to enter in chat room allowed by creator of chat room . once entering process complete then in same room users can conversate with each other , messages should be seen in chat box like ( user_name : message_sent timestamp ). there must be option of logout from chat room {% endcomment %}
